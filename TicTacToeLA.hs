@@ -1,3 +1,5 @@
+module TicTacToeLA where
+
 import Data.Matrix
 import qualified Data.Vector as V
 

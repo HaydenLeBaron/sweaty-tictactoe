@@ -1,6 +1,6 @@
 import Control.Monad
 import Data.Char
-import qualified TicTacToe as T
+import qualified TicTacToeLA as T
 
 main = forever $ do
     putStr "==========\nTURN #\n==========\n"
