@@ -19,7 +19,6 @@ whoMovedLast :: BoardState -> Marker
 whoMovedLast (BoardState curr prev)
   = abs . getNon0Elt $ prev - curr
   where getNon0Elt = head . filter (/= 0) . toList
-  
 
 whereLastMoved :: BoardState -> Space
 whereLastMoved (BoardState curr prev) =
@@ -28,8 +27,6 @@ whereLastMoved (BoardState curr prev) =
         getNon0EltSpace = fst . head . filter (\((_,_), e) -> e /= 0)
                           . zip [(x,y) | x <- [1..dim], y <- [1..dim]]
                           . toList :: Board -> Space
-
-
 
 
 -- Algorithm:
@@ -48,12 +45,12 @@ Returns Just the resulting Board if the move was valid,
 & Nothing if invalid.
 -}
 -- TODO: make this return a boardstate
-tryApplyMove :: Marker -> Space -> BoardState -> Maybe Board
+tryApplyMove :: Marker -> Space -> BoardState -> Maybe BoardState
 tryApplyMove m (x,y) (BoardState curr _)
-  | isSpaceEmpty (x,y) curr = Just curr >>= applyMove
+  | isSpaceEmpty (x,y) curr = Just $ BoardState (applyMove curr) curr
   | otherwise = Nothing
   where isSpaceEmpty (x,y) curr = getElem x y curr == 0
-        applyMove = safeSet m (x,y)
+        applyMove = setElem m (x,y)
 
 {- Tries to declare victory.
 Returns Nothing if nobody has won yet.
