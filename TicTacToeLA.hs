@@ -19,6 +19,7 @@ whoMovedLast :: BoardState -> Marker
 whoMovedLast (BoardState curr prev)
   = abs . getNon0Elt $ prev - curr
   where getNon0Elt = head . filter (/= 0) . toList
+  
 
 whereLastMoved :: BoardState -> Space
 whereLastMoved (BoardState curr prev) =
@@ -46,11 +47,12 @@ Takes a
 Returns Just the resulting Board if the move was valid,
 & Nothing if invalid.
 -}
-tryApplyMove :: Marker -> Space -> Board -> Maybe Board
-tryApplyMove m (x,y) b
-  | isSpaceEmpty (x,y) b = Just b >>= applyMove
+-- TODO: make this return a boardstate
+tryApplyMove :: Marker -> Space -> BoardState -> Maybe Board
+tryApplyMove m (x,y) (BoardState curr _)
+  | isSpaceEmpty (x,y) curr = Just curr >>= applyMove
   | otherwise = Nothing
-  where isSpaceEmpty (x,y) b = getElem x y b == 0
+  where isSpaceEmpty (x,y) curr = getElem x y curr == 0
         applyMove = safeSet m (x,y)
 
 {- Tries to declare victory.
@@ -58,16 +60,17 @@ Returns Nothing if nobody has won yet.
 Else, returns the Marker of the winner.-}
 tryDeclareVictory :: BoardState -> Maybe Marker
 tryDeclareVictory (BoardState curr prev)
-  | checkRows curr
-    || checkCols curr
-    || checkDiag curr
-    || checkAntiDiag curr = Just heMovedLast
+  | checkRows curr ||
+    checkCols curr ||
+    checkDiag curr ||
+    checkAntiDiag curr = Just heMovedLast
   | otherwise = Nothing
   where heMovedLast = whoMovedLast (BoardState curr prev)
         dim = nrows curr
-        checkFor3 = foldr (\x acc -> acc || x == heMovedLast * dim) False
+        checkFor3 = (foldr (\x acc -> acc || x == heMovedLast * dim) False) :: Board -> Bool
         --
-        checkRows b = checkFor3 $ b * (colVector (V.replicate dim 1))
-        checkCols b = checkFor3 $ (rowVector (V.replicate dim 1)) * b
-        checkDiag b = (heMovedLast * dim) == sum $ diagonalList b
-        checkAntiDiag = Nothing -- TODO: implement
+        checkRows b = (checkFor3 $ b * (colVector (V.replicate dim 1))) :: Bool
+        checkCols b = (checkFor3 $ (rowVector (V.replicate dim 1)) * b) :: Bool
+        checkDiag b = False -- TODO: implement
+        --checkDiag b = (heMovedLast * dim) == sum $ diagonalList b :: Bool
+        checkAntiDiag b = False -- TODO: implement
