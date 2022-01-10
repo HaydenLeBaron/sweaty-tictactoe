@@ -1,6 +1,7 @@
 import Control.Monad
 import Data.Char
 import TicTacToeLA
+import Text.Read -- TODO: only import readMaybe
 -- TODO: try to create the tic-tac-toe game now. Massage lib as needed.
 
 type Turn = Int
@@ -32,4 +33,12 @@ play mrk turn (Right bs)
       play mrk (turn + 1) $ tryApplyMove mrk space bs
 
 
--- TODO: implement a getLine that will always return things in bounds
+{- Get the first two tokens the user enters and -}
+getMove :: IO (Maybe Int, Maybe Int)
+getMove =
+  let tup [x, y] = (x, y)
+  in
+    getLine
+    >>= (return) . (take 2 . words)
+    >>= mapM (return . readMaybe)
+    >>= return . tup
