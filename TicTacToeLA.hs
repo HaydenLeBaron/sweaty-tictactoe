@@ -48,7 +48,7 @@ Takes a
 Returns Either the updated board state if the move is valid (Right), or
 the unchanged board state if the move is invalid (Left).
 -}
--- TODO: convert to take maybe Space
+
 tryApplyMove :: Marker -> Space -> BoardState -> Either BoardState BoardState
 tryApplyMove mrk (x,y) (BoardState curr prev)
   | isValid (x,y) curr = Right $ BoardState (applyMove curr) curr
@@ -56,7 +56,7 @@ tryApplyMove mrk (x,y) (BoardState curr prev)
   where isValid (x,y) curr =
           x <= (nrows curr) && y <= (nrows curr)
           && x >= 1 && y >= 1
-          && getElem x y curr == 0 
+          && getElem x y curr == 0
         applyMove = setElem mrk (x,y)
 
 

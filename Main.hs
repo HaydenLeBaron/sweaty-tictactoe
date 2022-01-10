@@ -27,18 +27,28 @@ play mrk turn (Right bs)
   | otherwise = do
       putStrLn $ show $ currBoard bs
       putStrLn $ "Turn #" ++ show turn ++ ": Player " ++ show mrk ++ ", enter a space to mark. Ex: \"1\n2\""
-      xStr <- getLine
-      yStr <- getLine
-      let space = (read xStr, read yStr)
-      play mrk (turn + 1) $ tryApplyMove mrk space bs
+      xy <- getMove -- TODO: catch and handle exception on unparsable input (reprompt)
+      putStrLn $ "MOVE: " ++ show xy
+      play mrk (turn + 1) $ tryApplyMove mrk xy bs
+
+-- NOTE: I'm probably not going to use this one since then I have to deal with maybe
+safeGetMove :: IO (Maybe Int, Maybe Int)
+safeGetMove =
+  let tup [x, y] = (x, y)
+      tup _ = (Nothing, Nothing)
+  in
+    getLine
+    >>= (return) . (take 2 . words)
+    >>= mapM (return . readMaybe)
+    >>= return . tup
 
 
-{- Get the first two tokens the user enters and -}
-getMove :: IO (Maybe Int, Maybe Int)
+-- NOTE: I'm doing it unsafely I read that exception catching/handling is OK practice in the IO monad
+getMove :: IO (Int, Int)
 getMove =
   let tup [x, y] = (x, y)
   in
     getLine
     >>= (return) . (take 2 . words)
-    >>= mapM (return . readMaybe)
+    >>= return . map (read :: String -> Int)
     >>= return . tup
