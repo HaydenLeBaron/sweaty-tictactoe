@@ -45,16 +45,18 @@ Takes a
   * Space, representing the place player#Marker wants to mark
   * Board, representing the current board shapshot
 
-Returns Just the resulting Board if the move was valid,
-& Nothing if invalid.
+Returns Either the updated board state if the move is valid (Right), or
+the unchanged board state if the move is invalid (Left).
 -}
--- TODO: make this return a boardstate
 -- TODO: also check bounds of the Space
-tryApplyMove :: Marker -> Space -> BoardState -> Maybe BoardState
-tryApplyMove mrk (x,y) (BoardState curr _)
-  | isSpaceEmpty (x,y) curr = Just $ BoardState (applyMove curr) curr
-  | otherwise = Nothing
-  where isSpaceEmpty (x,y) curr = getElem x y curr == 0
+tryApplyMove :: Marker -> Space -> BoardState -> Either BoardState BoardState
+tryApplyMove mrk (x,y) (BoardState curr prev)
+  | isValid (x,y) curr = Right $ BoardState (applyMove curr) curr
+  | otherwise = Left $ BoardState curr prev
+  where isValid (x,y) curr =
+          x <= (nrows curr) && y <= (nrows curr)
+          && x >= 1 && y >= 1
+          && getElem x y curr == 0 
         applyMove = setElem mrk (x,y)
 
 
@@ -77,3 +79,4 @@ gameWon (BoardState curr prev) =
         checkRows = checkCols . transpose
         checkDiag b = (heMovedLast * dim) == trace b
         checkAntiDiag b = (heMovedLast * dim) == antitrace b
+

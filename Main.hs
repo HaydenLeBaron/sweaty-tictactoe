@@ -9,13 +9,16 @@ main = do
   putStrLn "THIS IS THE START OF THE GAME"
   -- TODO: Ask the dimensions of the board
   -- TODO: Ask how many players there are
-  let bs0 = Just $ initBoardState 3
+  let bs0 = Right $ initBoardState 3
   play 1 1 bs0 -- Start with player 1 TODO: get rid of hardcoded numbers
 
 
 -- TODO: handle case where there are no spaces left (DRAW)
-play :: Marker -> Turn -> Maybe BoardState -> IO ()
-play mrk turn (Just bs)
+play :: Marker -> Turn -> Either BoardState BoardState -> IO ()
+play mrk turn (Left bs) = do
+  putStrLn "=====\nINVALID MOVE\n====="
+  play mrk (turn - 1) (Right bs)
+play mrk turn (Right bs)
   | gameWon bs = do
       putStrLn $ show $ currBoard bs
       let winner = show $ whoMovedLast bs
@@ -26,7 +29,7 @@ play mrk turn (Just bs)
       xStr <- getLine
       yStr <- getLine
       let space = (read xStr, read yStr)
-      play 1 (turn + 1) $ tryApplyMove mrk space bs
+      play mrk (turn + 1) $ tryApplyMove mrk space bs
 
 
-      -- TODO: implement a getLine that will always return things in bounds
+-- TODO: implement a getLine that will always return things in bounds
