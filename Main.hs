@@ -26,14 +26,28 @@ play mrk turn (Right bs)
       putStrLn $ "Player " ++ winner ++ " won!"
   | otherwise = do
       putStrLn $ show $ currBoard bs
-      putStrLn $ "Turn #" ++ show turn ++ ": Player " ++ show mrk ++ ", enter a space to mark. Ex: \"1 2\""
-      xy <- getMove -- TODO:BKMRK: catch and handle exception on unparsable input (reprompt)
+      putStrLn $ "Turn #" ++ show turn
+        ++ ": Player " ++ show mrk
+        ++ ", enter a space to mark. Ex: \"1 2\""
+      xy <- safeGetMove
       putStrLn $ "MOVE: " ++ show xy
       play mrk (turn + 1) $ tryApplyMove mrk xy bs
 
--- NOTE: I'm probably not going to use this one since then I have to deal with maybe
-safeGetMove :: IO (Maybe Int, Maybe Int)
+
+safeGetMove :: IO (Int, Int)
 safeGetMove =
+  getLine
+  >>= (return) . (take 2 . words)
+  >>= return . map (reads :: ReadS Int)
+  >>= tryExtract
+    where
+      tryExtract [[(x, "")], [(y, "")]] = return (x, y)
+      tryExtract _ = putStrLn "Couldn't parse. Please enter like so: x y" >> safeGetMove
+
+{-
+-- NOTE: I'm probably not going to use this one since then I have to deal with maybe
+safeGetMove' :: IO (Maybe Int, Maybe Int)
+safeGetMove' =
   let tup [x, y] = (x, y)
       tup _ = (Nothing, Nothing)
   in
@@ -52,3 +66,6 @@ getMove =
     >>= (return) . (take 2 . words)
     >>= return . map (read :: String -> Int)
     >>= return . tup
+
+ getLine >>= (return) . (take 2 . words) >>= return . map (read :: String -> Int) >>= return . tup
+-}
