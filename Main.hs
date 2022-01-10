@@ -1,6 +1,7 @@
 import Control.Monad
 import Data.Char
 import qualified TicTacToeLA as T
+-- TODO: try to create the tic-tac-toe game now. Massage lib as needed.
 
 main = forever $ do
     putStr "==========\nTURN #\n==========\n"

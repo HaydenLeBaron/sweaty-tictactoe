@@ -5,9 +5,7 @@ import qualified Data.Vector as V
 
 type Marker = Int
 type Board = Matrix Marker
-type Space = (Int, Int) -- NOTE: Spaces of a matrix are 1-indexed
-
--- TODO: right here we could encode validity in the boardstate itself
+type Space = (Int, Int) -- NOTE: Spaces of a Data.Matrix (and Board) are 1-indexed
 data BoardState = BoardState { currBoard :: Board
                              , prevBoard :: Board
                              } deriving (Show, Eq)
@@ -46,11 +44,11 @@ Returns Just the resulting Board if the move was valid,
 -}
 -- TODO: make this return a boardstate
 tryApplyMove :: Marker -> Space -> BoardState -> Maybe BoardState
-tryApplyMove m (x,y) (BoardState curr _)
+tryApplyMove mrk (x,y) (BoardState curr _)
   | isSpaceEmpty (x,y) curr = Just $ BoardState (applyMove curr) curr
   | otherwise = Nothing
   where isSpaceEmpty (x,y) curr = getElem x y curr == 0
-        applyMove = setElem m (x,y)
+        applyMove = setElem mrk (x,y)
 
 {- Tries to declare victory.
 Returns Nothing if nobody has won yet.
@@ -64,10 +62,10 @@ tryDeclareVictory (BoardState curr prev)
   | otherwise = Nothing
   where heMovedLast = whoMovedLast (BoardState curr prev)
         dim = nrows curr
-        checkFor3 = (foldr (\x acc -> acc || x == heMovedLast * dim) False) :: Board -> Bool
+        checkFor3 = (foldr (\x acc -> acc || x == heMovedLast * dim) False)
+          :: Board -> Bool
         --
-        checkRows b = (checkFor3 $ b * (colVector (V.replicate dim 1))) :: Bool
-        checkCols b = (checkFor3 $ (rowVector (V.replicate dim 1)) * b) :: Bool
-        checkDiag b = False -- TODO: implement
-        --checkDiag b = (heMovedLast * dim) == sum $ diagonalList b :: Bool
+        checkRows b = checkFor3 $ b * (colVector (V.replicate dim 1)) -- TODO: V.replicate dim 1 should be a function called unitvec or something
+        checkCols b = checkFor3 $ (rowVector (V.replicate dim 1)) * b
+        checkDiag b = (heMovedLast * dim) == sum (getDiag b)
         checkAntiDiag b = False -- TODO: implement
