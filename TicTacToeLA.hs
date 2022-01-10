@@ -10,6 +10,12 @@ data BoardState = BoardState { currBoard :: Board
                              , prevBoard :: Board
                              } deriving (Show, Eq)
 
+{- Takes a dimension for the board and creates the
+initial board state -}
+initBoardState :: Int -> BoardState
+initBoardState dim = BoardState { currBoard = zero dim dim
+                                , prevBoard = zero dim dim }
+
 {- Takes board state, returning the last space moved to
 and who moved there -}
 -- TODO: handle possibility of empty list (when curr == prev => no changes to board)
@@ -43,6 +49,7 @@ Returns Just the resulting Board if the move was valid,
 & Nothing if invalid.
 -}
 -- TODO: make this return a boardstate
+-- TODO: also check bounds of the Space
 tryApplyMove :: Marker -> Space -> BoardState -> Maybe BoardState
 tryApplyMove mrk (x,y) (BoardState curr _)
   | isSpaceEmpty (x,y) curr = Just $ BoardState (applyMove curr) curr
