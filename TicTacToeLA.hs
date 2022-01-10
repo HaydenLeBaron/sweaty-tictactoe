@@ -49,10 +49,10 @@ Returns Either the updated board state if the move is valid (Right), or
 the unchanged board state if the move is invalid (Left).
 -}
 
-tryApplyMove :: Marker -> Space -> BoardState -> Either BoardState BoardState
+tryApplyMove :: Marker -> Space -> BoardState -> Either (BoardState, String) BoardState
 tryApplyMove mrk (x,y) (BoardState curr prev)
   | isValid (x,y) curr = Right $ BoardState (applyMove curr) curr
-  | otherwise = Left $ BoardState curr prev
+  | otherwise = Left $ (BoardState curr prev, "Couldn't apply move")
   where isValid (x,y) curr =
           x <= (nrows curr) && y <= (nrows curr)
           && x >= 1 && y >= 1

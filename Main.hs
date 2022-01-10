@@ -15,9 +15,9 @@ main = do
 
 
 -- TODO: handle case where there are no spaces left (DRAW)
-play :: Marker -> Turn -> Either BoardState BoardState -> IO ()
-play mrk turn (Left bs) = do
-  putStrLn "=====\nINVALID MOVE\n====="
+play :: Marker -> Turn -> Either (BoardState, String) BoardState -> IO ()
+play mrk turn (Left (bs, msg)) = do
+  putStrLn $ "=====\nINVALID MOVE: " ++ msg ++ "\n====="
   play mrk (turn - 1) (Right bs)
 play mrk turn (Right bs)
   | gameWon bs = do
