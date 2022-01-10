@@ -14,7 +14,7 @@ data BoardState = BoardState { currBoard :: Board
 initial board state -}
 initBoardState :: Int -> BoardState
 initBoardState dim = BoardState { currBoard = zero dim dim
-                                , prevBoard = zero dim dim }
+                                , prevBoard = identity dim } -- FIXME: Currently, I'm making prevboard be different than currboard so that when whoMovedLast is called, an exception isn't thrown (due to call to head on an empty list)
 
 {- Takes board state, returning the last space moved to
 and who moved there -}
@@ -57,22 +57,23 @@ tryApplyMove mrk (x,y) (BoardState curr _)
   where isSpaceEmpty (x,y) curr = getElem x y curr == 0
         applyMove = setElem mrk (x,y)
 
-{- Tries to declare victory.
-Returns Nothing if nobody has won yet.
-Else, returns the Marker of the winner.-}
-tryDeclareVictory :: BoardState -> Maybe Marker
-tryDeclareVictory (BoardState curr prev)
-  | checkRows curr ||
-    checkCols curr ||
-    checkDiag curr ||
-    checkAntiDiag curr = Just heMovedLast
-  | otherwise = Nothing
+
+gameWon :: BoardState -> Bool
+gameWon (BoardState curr prev) =
+  (checkRows curr) ||
+  (checkCols curr) ||
+  (checkDiag curr) ||
+  (checkAntiDiag curr)
   where heMovedLast = whoMovedLast (BoardState curr prev)
         dim = nrows curr
+        unitvec = colVector $ V.replicate dim 1
         checkFor3 = (foldr (\x acc -> acc || x == heMovedLast * dim) False)
           :: Board -> Bool
+        antitrace m = sum $ V.generate k $ \i -> m ! ((ncols m) - i, i+1)
+          where k = min (nrows m) (ncols m)
+        -- TODO: add this to the matrix library with a PR?
         --
-        checkRows b = checkFor3 $ b * (colVector (V.replicate dim 1)) -- TODO: V.replicate dim 1 should be a function called unitvec or something
-        checkCols b = checkFor3 $ (rowVector (V.replicate dim 1)) * b
-        checkDiag b = (heMovedLast * dim) == sum (getDiag b)
-        checkAntiDiag b = False -- TODO: implement
+        checkCols = checkFor3 . (*unitvec)
+        checkRows = checkCols . transpose
+        checkDiag b = (heMovedLast * dim) == trace b
+        checkAntiDiag b = (heMovedLast * dim) == antitrace b
