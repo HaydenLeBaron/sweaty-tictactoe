@@ -26,8 +26,8 @@ play mrk turn (Right bs)
       putStrLn $ "Player " ++ winner ++ " won!"
   | otherwise = do
       putStrLn $ show $ currBoard bs
-      putStrLn $ "Turn #" ++ show turn ++ ": Player " ++ show mrk ++ ", enter a space to mark. Ex: \"1\n2\""
-      xy <- getMove -- TODO: catch and handle exception on unparsable input (reprompt)
+      putStrLn $ "Turn #" ++ show turn ++ ": Player " ++ show mrk ++ ", enter a space to mark. Ex: \"1 2\""
+      xy <- getMove -- TODO:BKMRK: catch and handle exception on unparsable input (reprompt)
       putStrLn $ "MOVE: " ++ show xy
       play mrk (turn + 1) $ tryApplyMove mrk xy bs
 

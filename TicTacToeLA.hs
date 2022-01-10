@@ -51,12 +51,15 @@ the unchanged board state if the move is invalid (Left).
 
 tryApplyMove :: Marker -> Space -> BoardState -> Either (BoardState, String) BoardState
 tryApplyMove mrk (x,y) (BoardState curr prev)
-  | isValid (x,y) curr = Right $ BoardState (applyMove curr) curr
-  | otherwise = Left $ (BoardState curr prev, "Couldn't apply move")
-  where isValid (x,y) curr =
+  | not $ inBounds (x,y) curr = Left $
+    (BoardState curr prev, "Tried to mark out of bounds.")
+  | not $ free (x,y) curr = Left $
+    (BoardState curr prev, "That space is already taken!")
+  | otherwise =  Right $ BoardState (applyMove curr) curr
+  where inBounds (x,y) curr =
           x <= (nrows curr) && y <= (nrows curr)
           && x >= 1 && y >= 1
-          && getElem x y curr == 0
+        free (x,y) curr = getElem x y curr == 0
         applyMove = setElem mrk (x,y)
 
 
@@ -79,4 +82,3 @@ gameWon (BoardState curr prev) =
         checkRows = checkCols . transpose
         checkDiag b = (heMovedLast * dim) == trace b
         checkAntiDiag b = (heMovedLast * dim) == antitrace b
-
