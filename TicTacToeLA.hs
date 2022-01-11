@@ -100,3 +100,6 @@ gameWon (BoardState curr prev) =
         checkRows = checkCols . transpose
         checkDiag b = (heMovedLast * dim) == trace b
         checkAntiDiag b = (heMovedLast * dim) == antitrace b
+
+existsEmptySpace :: BoardState -> Bool
+existsEmptySpace (BoardState curr _) = filter (==0) (toList curr) == []

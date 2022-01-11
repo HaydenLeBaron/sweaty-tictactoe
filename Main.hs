@@ -23,11 +23,14 @@ play mrk turn (Left (bs, msg)) = do
   putStrLn $ "=====\nINVALID MOVE: " ++ msg ++ "\n====="
   let prevPlayer = getPrevPlayer mrk $ M.nrows (currBoard bs)
   play prevPlayer (turn - 1) (Right bs)
-play mrk turn (Right bs)
+play mrk turn (Right bs) 
   | gameWon bs = do
       putStrLn $ show $ currBoard bs
       let winner = show $ whoMovedLast bs
-      putStrLn $ "Player " ++ winner ++ " won!"
+      putStrLn $ "PLAYER " ++ winner ++ " WON!"
+  | existsEmptySpace bs = do
+      putStrLn $ show $ currBoard bs
+      putStrLn "IT'S A TIE!"
   | otherwise = do
       putStrLn $ show $ currBoard bs
       putStrLn $ "Turn #" ++ show turn
