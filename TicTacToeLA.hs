@@ -32,6 +32,25 @@ whereLastMoved (BoardState curr prev) =
                           . zip [(x,y) | x <- [1..dim], y <- [1..dim]]
                           . toList :: Board -> Space
 
+{- Takes the current player and the dimensions
+of the board and returns the next player who would move -}
+getNxtPlayer :: Marker -> Int -> Marker
+getNxtPlayer curr dim
+  | curr == dim + 1 = 1
+  | curr < dim = curr + dim
+  | otherwise = error "Couldn't get next player"
+
+{- Takes the current player and the dimensions
+of the board and returns the player who should move
+previous to the current player. -}
+getPrevPlayer :: Marker -> Int -> Marker
+getPrevPlayer curr dim
+  | curr == 1 = dim + 1
+  | curr > 1 = curr - dim
+  | otherwise = error "Couldn't get previous player"
+
+
+
 -- Algorithm:
 -- 0. Generate new board from Space.
   -- Then between the old and new board:

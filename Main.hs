@@ -3,6 +3,7 @@ import Data.Char
 import TicTacToeLA
 import Text.Read -- TODO: only import readMaybe
 -- TODO: try to create the tic-tac-toe game now. Massage lib as needed.
+import qualified Data.Matrix as M
 
 type Turn = Int
 
@@ -12,7 +13,6 @@ main = do
   putStrLn "THIS IS THE START OF THE GAME"
   putStrLn "Enter a number for the dimensions of the board. Ex: 3"
   dim <- tenaciousGetNat
-  -- TODO: Ask how many players there are
   let bs0 = Right $ initBoardState dim
   play 1 1 bs0 -- Start with player 1 TODO: get rid of hardcoded numbers
 
@@ -21,7 +21,8 @@ main = do
 play :: Marker -> Turn -> Either (BoardState, String) BoardState -> IO ()
 play mrk turn (Left (bs, msg)) = do
   putStrLn $ "=====\nINVALID MOVE: " ++ msg ++ "\n====="
-  play mrk (turn - 1) (Right bs)
+  let prevPlayer = getPrevPlayer mrk $ M.nrows (currBoard bs)
+  play prevPlayer (turn - 1) (Right bs)
 play mrk turn (Right bs)
   | gameWon bs = do
       putStrLn $ show $ currBoard bs
@@ -34,13 +35,14 @@ play mrk turn (Right bs)
         ++ ", enter a space to mark. Ex: \"1 2\""
       xy <- tenaciousGet2Tuple
       putStrLn $ "MOVE: " ++ show xy
-      play mrk (turn + 1) $ tryApplyMove mrk xy bs
+      let nxtPlayer = getNxtPlayer mrk $ M.nrows (currBoard bs)
+      play nxtPlayer (turn + 1) $ tryApplyMove mrk xy bs
 
 
 tenaciousGet2Tuple :: IO (Int, Int)
 tenaciousGet2Tuple =
   getLine
-  >>= (return) . (take 2 . words)
+  >>= return . (take 2 . words)
   >>= return . map (reads :: ReadS Int)
   >>= tryExtract
     where
