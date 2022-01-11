@@ -1,15 +1,14 @@
-import Control.Monad
-import Data.Char
-import TicTacToeLA
-import qualified Data.Matrix as M
+import           Control.Monad
+import           Data.Char
+import qualified Data.Matrix   as M
+import           TicTacToeLA
 
 type Turn = Int
 
-
 main = do
-  putStrLn $ "================================================="
+  putStrLn "================================================="
   putStrLn "== THIS IS THE START OF THE GAME"
-  putStrLn $ "================================================="
+  putStrLn "================================================="
   putStrLn "Enter a number for the dimensions of the board. Ex: 3"
   dim <- tenaciousGetNat
   let bs0 = Right $ initBoardState dim
@@ -23,16 +22,16 @@ play mrk turn (Left (bs, msg)) = do
   play prevPlayer (turn - 1) (Right bs)
 play mrk turn (Right bs)
   | gameWon bs = do
-      putStrLn $ show $ currBoard bs
+      print $ currBoard bs
       let winner = show $ whoMovedLast bs
       putStrLn "***************************************"
       putStrLn $ "PLAYER " ++ winner ++ " WON!"
       putStrLn "***************************************"
-  | existsEmptySpace bs = do
-      putStrLn $ show $ currBoard bs
+  | not $ existsEmptySpace bs = do
+      print $ currBoard bs
       putStrLn "IT'S A TIE!"
   | otherwise = do
-      putStrLn $ show $ currBoard bs
+      print $ currBoard bs
       putStrLn "---------------------------------------"
       putStrLn $ "-- TURN #" ++ show turn ++ " :: Player " ++ show mrk
       putStrLn "---------------------------------------"

@@ -1,6 +1,6 @@
 module TicTacToeLA where
 
-import Data.Matrix
+import           Data.Matrix
 import qualified Data.Vector as V
 
 type Marker = Int
@@ -69,13 +69,13 @@ the unchanged board state if the move is invalid (Left).
 
 tryApplyMove :: Marker -> Space -> BoardState -> Either (BoardState, String) BoardState
 tryApplyMove mrk (x,y) (BoardState curr prev)
-  | not $ inBounds (x,y) curr = Left $
+  | not $ inBounds (x,y) curr = Left
     (BoardState curr prev, "Tried to mark out of bounds.")
-  | not $ free (x,y) curr = Left $
+  | not $ free (x,y) curr = Left
     (BoardState curr prev, "That space is already taken!")
   | otherwise =  Right $ BoardState (applyMove curr) curr
   where inBounds (x,y) curr =
-          x <= (nrows curr) && y <= (nrows curr)
+          x <= nrows curr && y <= nrows curr
           && x >= 1 && y >= 1
         free (x,y) curr = getElem x y curr == 0
         applyMove = setElem mrk (x,y)
@@ -83,16 +83,16 @@ tryApplyMove mrk (x,y) (BoardState curr prev)
 
 gameWon :: BoardState -> Bool
 gameWon (BoardState curr prev) =
-  (checkRows curr) ||
-  (checkCols curr) ||
-  (checkDiag curr) ||
-  (checkAntiDiag curr)
+  checkRows curr ||
+  checkCols curr ||
+  checkDiag curr ||
+  checkAntiDiag curr
   where heMovedLast = whoMovedLast (BoardState curr prev)
         dim = nrows curr
         unitvec = colVector $ V.replicate dim 1
-        checkFor3 = (foldr (\x acc -> acc || x == heMovedLast * dim) False)
+        checkFor3 = foldr (\x acc -> acc || x == heMovedLast * dim) False
           :: Board -> Bool
-        antitrace m = sum $ V.generate k $ \i -> m ! ((ncols m) - i, i+1)
+        antitrace m = sum $ V.generate k $ \i -> m ! (ncols m - i, i+1)
           where k = min (nrows m) (ncols m)
         checkCols = checkFor3 . (*unitvec)
         checkRows = checkCols . transpose
@@ -100,4 +100,4 @@ gameWon (BoardState curr prev) =
         checkAntiDiag b = (heMovedLast * dim) == antitrace b
 
 existsEmptySpace :: BoardState -> Bool
-existsEmptySpace (BoardState curr _) = filter (==0) (toList curr) == []
+existsEmptySpace (BoardState curr _) = 0 `elem` toList curr
