@@ -1,13 +1,10 @@
 import Control.Monad
 import Data.Char
 import TicTacToeLA
-import Text.Read -- TODO: only import readMaybe
--- TODO: try to create the tic-tac-toe game now. Massage lib as needed.
 import qualified Data.Matrix as M
 
 type Turn = Int
 
--- TODO: Idea: introduce gravity step (tokens fall once per turn).
 
 main = do
   putStrLn $ "================================================="
@@ -16,10 +13,9 @@ main = do
   putStrLn "Enter a number for the dimensions of the board. Ex: 3"
   dim <- tenaciousGetNat
   let bs0 = Right $ initBoardState dim
-  play 1 1 bs0 -- Start with player 1 TODO: get rid of hardcoded numbers
+  play 1 1 bs0 -- Starting turn is player 1
 
 
--- TODO: handle case where there are no spaces left (DRAW)
 play :: Marker -> Turn -> Either (BoardState, String) BoardState -> IO ()
 play mrk turn (Left (bs, msg)) = do
   putStrLn $ "!!!!! INVALID MOVE: " ++ msg ++ " !!!!!"
@@ -68,30 +64,3 @@ tenaciousGetNat =
           | otherwise = putStrLn "Can't choose a negative number!" >> tenaciousGetNat
         tryExtract _ = putStrLn
           "Couldn't parse. Please enter a number like so: `x`" >> tenaciousGetNat
-
-
-{-
--- NOTE: I'm probably not going to use this one since then I have to deal with maybe
-safeGetMove' :: IO (Maybe Int, Maybe Int)
-safeGetMove' =
-  let tup [x, y] = (x, y)
-      tup _ = (Nothing, Nothing)
-  in
-    getLine
-    >>= (return) . (take 2 . words)
-    >>= mapM (return . readMaybe)
-    >>= return . tup
-
-
--- NOTE: I'm doing it unsafely I read that exception catching/handling is OK practice in the IO monad
-getMove :: IO (Int, Int)
-getMove =
-  let tup [x, y] = (x, y)
-  in
-    getLine
-    >>= (return) . (take 2 . words)
-    >>= return . map (read :: String -> Int)
-    >>= return . tup
-
- getLine >>= (return) . (take 2 . words) >>= return . map (read :: String -> Int) >>= return . tup
--}

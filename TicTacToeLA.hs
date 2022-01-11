@@ -94,8 +94,6 @@ gameWon (BoardState curr prev) =
           :: Board -> Bool
         antitrace m = sum $ V.generate k $ \i -> m ! ((ncols m) - i, i+1)
           where k = min (nrows m) (ncols m)
-        -- TODO: add this to the matrix library with a PR?
-        --
         checkCols = checkFor3 . (*unitvec)
         checkRows = checkCols . transpose
         checkDiag b = (heMovedLast * dim) == trace b
