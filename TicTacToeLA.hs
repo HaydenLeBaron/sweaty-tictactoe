@@ -32,7 +32,6 @@ whereLastMoved (BoardState curr prev) =
                           . zip [(x,y) | x <- [1..dim], y <- [1..dim]]
                           . toList :: Board -> Space
 
-
 -- Algorithm:
 -- 0. Generate new board from Space.
   -- Then between the old and new board:

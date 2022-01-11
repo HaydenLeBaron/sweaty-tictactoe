@@ -6,11 +6,14 @@ import Text.Read -- TODO: only import readMaybe
 
 type Turn = Int
 
+-- TODO: Idea: introduce gravity step (tokens fall once per turn).
+
 main = do
   putStrLn "THIS IS THE START OF THE GAME"
-  -- TODO: Ask the dimensions of the board
+  putStrLn "Enter a number for the dimensions of the board. Ex: 3"
+  dim <- tenaciousGetNat
   -- TODO: Ask how many players there are
-  let bs0 = Right $ initBoardState 3
+  let bs0 = Right $ initBoardState dim
   play 1 1 bs0 -- Start with player 1 TODO: get rid of hardcoded numbers
 
 
@@ -29,20 +32,33 @@ play mrk turn (Right bs)
       putStrLn $ "Turn #" ++ show turn
         ++ ": Player " ++ show mrk
         ++ ", enter a space to mark. Ex: \"1 2\""
-      xy <- safeGetMove
+      xy <- tenaciousGet2Tuple
       putStrLn $ "MOVE: " ++ show xy
       play mrk (turn + 1) $ tryApplyMove mrk xy bs
 
 
-safeGetMove :: IO (Int, Int)
-safeGetMove =
+tenaciousGet2Tuple :: IO (Int, Int)
+tenaciousGet2Tuple =
   getLine
   >>= (return) . (take 2 . words)
   >>= return . map (reads :: ReadS Int)
   >>= tryExtract
     where
       tryExtract [[(x, "")], [(y, "")]] = return (x, y)
-      tryExtract _ = putStrLn "Couldn't parse. Please enter like so: x y" >> safeGetMove
+      tryExtract _ = putStrLn
+        "Couldn't parse. Please enter like so: x y" >> tenaciousGet2Tuple
+
+tenaciousGetNat :: IO Int
+tenaciousGetNat =
+  getLine
+  >>= return . (reads :: ReadS Int)
+  >>= tryExtract
+  where tryExtract [(d, "")]
+          | d > 0 = return d
+          | otherwise = putStrLn "Can't choose a negative number!" >> tenaciousGetNat
+        tryExtract _ = putStrLn
+          "Couldn't parse. Please enter like so: x" >> tenaciousGetNat
+
 
 {-
 -- NOTE: I'm probably not going to use this one since then I have to deal with maybe
