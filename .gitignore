@@ -13,6 +13,6 @@
 *.o
 *.hi
 
-# Ignore newdist
-newdist
-dist-newstyle
+# Ignore build/cache
+*newdist/*
+*dist-newstyle/*
