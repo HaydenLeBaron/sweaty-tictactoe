@@ -1,4 +1,4 @@
-module TicTacToeLA where
+module TTTLib where
 
 import           Data.Matrix
 import qualified Data.Vector as V

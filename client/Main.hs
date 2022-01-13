@@ -2,7 +2,7 @@
 import           Control.Monad
 import           Data.Char
 import qualified Data.Matrix   as M
-import           TicTacToeLA
+import           TTTLib
 import qualified Network.HTTP.Simple as SIMPLEHTTP
 import qualified Data.ByteString.Char8 as BSC
 

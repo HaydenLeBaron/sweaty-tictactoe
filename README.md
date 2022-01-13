@@ -15,9 +15,7 @@ cabal build
 -- TODO: compile document about what I learned and the resources I used.
 -- TODO: Write all functions to never fail.
 
-```
-$ cabal run sweaty-client
-```
+
 
 ```
 $ cabal run sweaty-server
