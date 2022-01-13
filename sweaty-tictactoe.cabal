@@ -1,45 +1,37 @@
 cabal-version:      2.4
 name:               sweaty-tictactoe
 version:            0.1.0.0
-
--- A short (one-line) description of the package.
--- synopsis:
-
--- A longer description of the package.
--- description:
-
--- A URL where users can report bugs.
--- bug-reports:
-
--- The license under which the package is released.
--- license:
+synopsis:           A simple tic-tac-toe client with a game-history web server
+description:        See README.md
+homepage:           https://github.com/HaydenLeBaron/sweaty-tictactoe
+bug-reports:        https://github.com/HaydenLeBaron/sweaty-tictactoe
+license-file:       LICENSE
 author:             Hayden LeBaron
 maintainer:         hlebaron98@gmail.com
+copyright:          2022 Hayden LeBaron
+extra-source-files: README.md 
 
--- A copyright notice.
--- copyright:
--- category:
-extra-source-files:
-    CHANGELOG.md
-    README.md
 
 
 library
-  hs-source-dirs:      src
-  exposed-modules:     TTTLib
+  hs-source-dirs:      client-src, server-src
+  exposed-modules:     TTTLib, ScoreServerLib
 
   ghc-options:         -Wall -fno-warn-type-defaults
   default-language:    Haskell2010
-  build-depends:       base ^>=4.14.3.0, matrix ^>=0.3.6.1, vector ^>=0.12.3.1
+  build-depends:       base ^>=4.14.3.0, matrix ^>=0.3.6.1, vector ^>=0.12.3.1, scotty, text, containers, time, http-types, stm, lucid
 
 
 executable sweaty-client
-    main-is:          client/Main.hs
+  main-is:          client/Main.hs
 
-    -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions:
-    build-depends: base ^>=4.14.3.0, matrix ^>=0.3.6.1, sweaty-tictactoe, http-conduit ^>=2.3.8, bytestring ^>=0.10.12.0
+  build-depends: base ^>=4.14.3.0, matrix ^>=0.3.6.1, sweaty-tictactoe, http-conduit ^>=2.3.8, bytestring ^>=0.10.12.0
 
-    -- hs-source-dirs:   app
-    default-language: Haskell2010
-    default-extensions:          OverloadedStrings
+  default-language: Haskell2010
+  default-extensions:          OverloadedStrings
+
+executable sweaty-server
+  main-is:             server/Main.hs
+  default-language:    Haskell2010
+  ghc-options: -Wall -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base >= 4.7 && < 5 , sweaty-tictactoe
