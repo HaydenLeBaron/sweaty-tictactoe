@@ -1,7 +1,13 @@
+{-# LANGUAGE OverloadedStrings #-}
 import           Control.Monad
 import           Data.Char
 import qualified Data.Matrix   as M
 import           TicTacToeLA
+import qualified Network.HTTP.Simple as SIMPLEHTTP
+import qualified Data.ByteString.Char8 as BSC
+
+-- TODO: save port in a variable in a file instead of hardcoding
+-- TODO: save BSC api path in a file instead of hardcoding
 
 type Turn = Int
 
@@ -24,9 +30,23 @@ play mrk turn (Right bs)
   | gameWon bs = do
       print $ currBoard bs
       let winner = show $ whoMovedLast bs
+      let finalBoardStr = show $ M.toLists $ currBoard bs
       putStrLn "***************************************"
       putStrLn $ "PLAYER " ++ winner ++ " WON!"
       putStrLn "***************************************"
+      putStrLn "What is the name of the winner?"
+      winnerName <- getLine
+      putStrLn "What is the name of the loser?"
+      loserName <- getLine
+      let path = BSC.pack $ "/new?winner=" ++ winnerName ++ "&loser=" ++ loserName ++ "&boardstate=" ++ finalBoardStr
+      -- Send HTTP request (https://livebook.manning.com/book/get-programming-with-haskell/chapter-39/74)
+      SIMPLEHTTP.httpLBS
+        $ SIMPLEHTTP.setRequestMethod "POST"
+        $ SIMPLEHTTP.setRequestPath path
+        $ SIMPLEHTTP.setRequestPort 3000
+        $ SIMPLEHTTP.defaultRequest
+      putStrLn "\n"
+
   | not $ existsEmptySpace bs = do
       print $ currBoard bs
       putStrLn "IT'S A TIE!"
@@ -63,3 +83,4 @@ tenaciousGetNat =
           | otherwise = putStrLn "Can't choose a negative number!" >> tenaciousGetNat
         tryExtract _ = putStrLn
           "Couldn't parse. Please enter a number like so: `x`" >> tenaciousGetNat
+

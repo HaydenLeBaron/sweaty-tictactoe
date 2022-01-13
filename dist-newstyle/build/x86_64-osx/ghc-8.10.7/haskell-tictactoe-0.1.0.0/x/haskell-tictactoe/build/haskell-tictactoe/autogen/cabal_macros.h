@@ -20,6 +20,26 @@
   (major1) == 4 && (major2) <  14 || \
   (major1) == 4 && (major2) == 14 && (minor) <= 3)
 #endif /* MIN_VERSION_base */
+/* package bytestring-0.10.12.0 */
+#ifndef VERSION_bytestring
+#define VERSION_bytestring "0.10.12.0"
+#endif /* VERSION_bytestring */
+#ifndef MIN_VERSION_bytestring
+#define MIN_VERSION_bytestring(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  10 || \
+  (major1) == 0 && (major2) == 10 && (minor) <= 12)
+#endif /* MIN_VERSION_bytestring */
+/* package http-conduit-2.3.8 */
+#ifndef VERSION_http_conduit
+#define VERSION_http_conduit "2.3.8"
+#endif /* VERSION_http_conduit */
+#ifndef MIN_VERSION_http_conduit
+#define MIN_VERSION_http_conduit(major1,major2,minor) (\
+  (major1) <  2 || \
+  (major1) == 2 && (major2) <  3 || \
+  (major1) == 2 && (major2) == 3 && (minor) <= 8)
+#endif /* MIN_VERSION_http_conduit */
 /* package matrix-0.3.6.1 */
 #ifndef VERSION_matrix
 #define VERSION_matrix "0.3.6.1"

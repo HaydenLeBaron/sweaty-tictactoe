@@ -50,13 +50,6 @@ getPrevPlayer curr dim
   | otherwise = error "Couldn't get previous player"
 
 
-
--- Algorithm:
--- 0. Generate new board from Space.
-  -- Then between the old and new board:
--- 1. Make sure all non-zero cells stayed the same
--- 2. Make sure only one cell was changed
-
 {-
 Takes a
   * Marker, representing whose turn it is
