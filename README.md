@@ -14,3 +14,11 @@ cabal build
 -- TODO: prettify code with haskell prettifier.
 -- TODO: compile document about what I learned and the resources I used.
 -- TODO: Write all functions to never fail.
+
+```
+$ cabal run sweaty-client
+```
+
+```
+$ cabal run sweaty-server
+```
