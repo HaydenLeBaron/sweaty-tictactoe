@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               haskell-tictactoe
+name:               sweaty-tictactoe
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -38,7 +38,7 @@ executable sweaty-client
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends: base ^>=4.14.3.0, matrix ^>=0.3.6.1, haskell-tictactoe, http-conduit ^>=2.3.8, bytestring ^>=0.10.12.0
+    build-depends: base ^>=4.14.3.0, matrix ^>=0.3.6.1, sweaty-tictactoe, http-conduit ^>=2.3.8, bytestring ^>=0.10.12.0
 
     -- hs-source-dirs:   app
     default-language: Haskell2010

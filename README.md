@@ -1,7 +1,7 @@
 # README
 
+## Building
 
-To build
 ```
 cabal build
 ```
@@ -15,7 +15,17 @@ cabal build
 -- TODO: compile document about what I learned and the resources I used.
 -- TODO: Write all functions to never fail.
 
+## Run the client
 
+```
+$ cabal run sweaty-client
+```
+
+### Client Bugs
+- [ ] Throws exception if you do 1x1 matrix and try to make a move out of bounds (can't get next player)
+
+
+## Run the server
 
 ```
 $ cabal run sweaty-server
