@@ -1,6 +1,6 @@
 cabal-version:      2.4
 name:               sweaty-tictactoe
-version:            0.1.0.0
+version:            0.2.0.0
 synopsis:           A simple tic-tac-toe client with a game-history web server
 description:        See README.md
 homepage:           https://github.com/HaydenLeBaron/sweaty-tictactoe
