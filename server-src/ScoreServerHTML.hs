@@ -28,7 +28,9 @@ gamesHtml games = do
 
 gameHtml :: Integer -> Game -> Html
 gameHtml gid game = do
-  let title = TL.concat [gWinner game, " (W) vs. ", gLoser game, " (L)"]
+  let winner = gWinner game
+  let loser = gLoser game
+  let title = TL.concat [ winner, " (W) vs. ", loser, " (L)" ]
   H.div_ [ H.class_ "game" ] $ do
     H.div_ [ H.class_ "game-header" ] $ do
       H.h3_ [ H.class_ "game-winner" ] $
@@ -39,5 +41,8 @@ gameHtml gid game = do
       H.span_ $ do
         H.p_ [ H.class_ "game-time" ] $ H.toHtml (TL.pack (show (gTime game)))
 
-    H.div_ [H.class_ "game-boardstate"] $ do
+    H.div_ [ H.class_ "game-boardstate" ] $ do
       H.toHtml (gBoardstate game)
+
+    H.div_ [ H.class_ "text" ] $ do
+      H.p_ [ H.class_ "game-time" ] $ H.toHtml $ TL.pack $ show $ "Let this serve as proof that " ++ TL.unpack winner ++ " is an overall better human being than " ++ TL.unpack loser ++ "."
