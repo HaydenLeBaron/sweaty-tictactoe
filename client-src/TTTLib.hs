@@ -3,27 +3,37 @@ module TTTLib where
 import           Data.Matrix
 import qualified Data.Vector as V
 
+{- Represents both a player, and the markers they put on the board. 
+ - E.g. the "X" player places "X" markers 
+ - (except they are represented as Ints. -}
 type Marker = Int
+
+{- A board is a Matrix-}
 type Board = Matrix Marker
+
+{- A space is a one-indexed ordered pair -}
 type Space = (Int, Int) -- NOTE: Spaces of a Data.Matrix (and Board) are 1-indexed
+
+{- Board state is represented as the two most recent boards. 
+ - All information is derived from their delta. -}
 data BoardState = BoardState { currBoard :: Board
                              , prevBoard :: Board
                              } deriving (Show, Eq)
 
-{- Takes a dimension for the board and creates the
-initial board state -}
+{- Takes a dimension for the board and creates the 
+ - initial board state -}
 initBoardState :: Int -> BoardState
 initBoardState dim = BoardState { currBoard = zero dim dim
-                                , prevBoard = identity dim } -- FIXME: Currently, I'm making prevboard be different than currboard so that when whoMovedLast is called, an exception isn't thrown (due to call to head on an empty list)
+                                , prevBoard = identity dim }
 
-{- Takes board state, returning the last space moved to
+{- Takes a board state, returning who last moved. -}
 and who moved there -}
--- TODO: handle possibility of empty list (when curr == prev => no changes to board)
 whoMovedLast :: BoardState -> Marker
 whoMovedLast (BoardState curr prev)
   = abs . getNon0Elt $ prev - curr
   where getNon0Elt = head . filter (/= 0) . toList
 
+{- Takes a board state, returning the space last moved to -}
 whereLastMoved :: BoardState -> Space
 whereLastMoved (BoardState curr prev) =
   getNon0EltSpace $ prev - curr
@@ -51,15 +61,12 @@ getPrevPlayer curr dim
 
 
 {-
-Takes a
-  * Marker, representing whose turn it is
-  * Space, representing the place player#Marker wants to mark
+Takes a Marker, representing whose turn it is
+  * Space, representing the place player Marker wants to mark
   * Board, representing the current board shapshot
-
-Returns Either the updated board state if the move is valid (Right), or
+  Returns Either the updated board state if the move is valid (Right), or
 the unchanged board state if the move is invalid (Left).
 -}
-
 tryApplyMove :: Marker -> Space -> BoardState -> Either (BoardState, String) BoardState
 tryApplyMove mrk (x,y) (BoardState curr prev)
   | not $ inBounds (x,y) curr = Left
@@ -73,7 +80,7 @@ tryApplyMove mrk (x,y) (BoardState curr prev)
         free (x,y) curr = getElem x y curr == 0
         applyMove = setElem mrk (x,y)
 
-
+{- Returns true if the game has been won. False otherwise -}
 gameWon :: BoardState -> Bool
 gameWon (BoardState curr prev) =
   checkRows curr ||
@@ -92,5 +99,6 @@ gameWon (BoardState curr prev) =
         checkDiag b = (heMovedLast * dim) == trace b
         checkAntiDiag b = (heMovedLast * dim) == antitrace b
 
+{- Returns True if there exists an empty space on the board. False otherwise. -}
 existsEmptySpace :: BoardState -> Bool
 existsEmptySpace (BoardState curr _) = 0 `elem` toList curr
