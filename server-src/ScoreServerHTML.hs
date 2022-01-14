@@ -41,13 +41,3 @@ gameHtml gid game = do
 
     H.div_ [H.class_ "game-boardstate"] $ do
       H.toHtml (gBoardstate game)
-
-    H.form_
-      [ H.method_ "post"
-      , H.action_ (TL.toStrict $ "/game/" <> TL.pack (show gid) <> "/delete")
-      , H.onsubmit_ "return confirm('Are you sure?')"
-      , H.class_ "delete-game"
-      ]
-      ( do
-        H.input_ [H.type_ "submit", H.value_ "Delete", H.class_ "deletebtn"]
-      )

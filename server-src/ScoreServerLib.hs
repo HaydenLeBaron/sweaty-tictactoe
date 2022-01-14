@@ -65,32 +65,7 @@ serverApp mystateVar = do
       mystateVar
     S.redirect ("/game/" <> TL.pack (show gid))
 
-  -- A request to delete a specific game
-  S.post "/game/:id/delete" $ do
-    gid <- S.param "id"
-    exists <- liftIO $ STM.atomically $ do
-      mystate <- STM.readTVar mystateVar
-      case M.lookup gid (hsGames mystate) of
-        Just{} -> do
-          STM.writeTVar
-            mystateVar
-            ( mystate
-              { hsGames = M.delete gid (hsGames mystate)
-              }
-            )
-          pure True
-
-        Nothing ->
-          pure False
-    if exists
-      then
-        S.redirect "/"
-
-      else do
-        S.status HTTP.notFound404
-        S.text "404 Not Found."
-
-  -- Small amount of CSS styling
+   -- Small amount of CSS styling
   S.get "/style.css" $ do
     S.setHeader "Content-Type" "text/css; charset=utf-8"
     S.raw ".main { width: 900px; margin: auto; }"
