@@ -10,6 +10,9 @@ This repository contains:
   - Tracks the result of every game ever played on every client instance.
   - Immortalizes each glorious victory and shameful defeat.
 
+🚡
+<img width="689" alt="Screen Shot 2022-01-13 at 7 27 53 PM" src="https://user-images.githubusercontent.com/43355097/149441230-11be7d28-462f-4cc8-ab5c-2b16891ea127.png">
+
 ## How to build
 
 If you don't want to build it yourself, check the RELEASES.
