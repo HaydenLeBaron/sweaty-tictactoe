@@ -22,7 +22,15 @@ This repository contains:
 
 If you don't want to build it yourself, check the RELEASES.
 
-Make sure you have `cabal` installed.
+Make sure you have `cabal-install` installed.
+
+
+Install dependencies
+
+```
+$ cabal install
+```
+
 
 ```
 $ cabal clean && cabal build
