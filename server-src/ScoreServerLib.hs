@@ -21,7 +21,7 @@ serverApp :: STM.TVar HistoryState -> S.ScottyM ()
 serverApp mystateVar = do
   -- HOME: Displays the entire history of tic-tac-toe games
   S.get "/" $ do
-    games <- liftIO $ msGames <$> STM.readTVarIO mystateVar
+    games <- liftIO $ hsGames <$> STM.readTVarIO mystateVar
     S.html $
       H.renderText $
         VIEW.template
@@ -30,22 +30,22 @@ serverApp mystateVar = do
 
   -- Page for a specific tic-tac-toe game
   S.get "/game/:id" $ do
-    pid <- S.param "id"
-    games <- liftIO $ msGames <$> STM.readTVarIO mystateVar
-    case M.lookup pid games of
+    gid <- S.param "id"
+    games <- liftIO $ hsGames <$> STM.readTVarIO mystateVar
+    case M.lookup gid games of
       Just game ->
         S.html $
           H.renderText $
             VIEW.template
-              ("TicTacToe board - game " <> TL.pack (show pid))
-              (VIEW.gameHtml pid game)
+              ("TicTacToe board - game " <> TL.pack (show gid))
+              (VIEW.gameHtml gid game)
 
       Nothing -> do
         S.status HTTP.notFound404
         S.html $
           H.renderText $
             VIEW.template
-              ("TicTacToe board - game " <> TL.pack (show pid) <> " not found.")
+              ("TicTacToe board - game " <> TL.pack (show gid) <> " not found.")
               "404 Game not found."
 
   -- A request to submit a new page
@@ -54,7 +54,7 @@ serverApp mystateVar = do
     loser <- S.param "loser"
     boardState <- S.param "boardstate"
     time <- liftIO C.getCurrentTime
-    pid <- liftIO $ newGame
+    gid <- liftIO $ newGame
       ( Game
         { gTime = time
         , gLoser = loser
@@ -63,19 +63,19 @@ serverApp mystateVar = do
         }
       )
       mystateVar
-    S.redirect ("/game/" <> TL.pack (show pid))
+    S.redirect ("/game/" <> TL.pack (show gid))
 
   -- A request to delete a specific game
   S.post "/game/:id/delete" $ do
-    pid <- S.param "id"
+    gid <- S.param "id"
     exists <- liftIO $ STM.atomically $ do
       mystate <- STM.readTVar mystateVar
-      case M.lookup pid (msGames mystate) of
+      case M.lookup gid (hsGames mystate) of
         Just{} -> do
           STM.writeTVar
             mystateVar
             ( mystate
-              { msGames = M.delete pid (msGames mystate)
+              { hsGames = M.delete gid (hsGames mystate)
               }
             )
           pure True
@@ -106,11 +106,11 @@ newGame game mystateVar = do
     STM.writeTVar
       mystateVar
       ( mystate
-        { msId = msId mystate + 1
-        , msGames = M.insert (msId mystate) game (msGames mystate)
+        { hsId = hsId mystate + 1
+        , hsGames = M.insert (hsId mystate) game (hsGames mystate)
         }
       )
-    pure (msId mystate)
+    pure (hsId mystate)
 
 makeDummyGames :: IO Games
 makeDummyGames = do

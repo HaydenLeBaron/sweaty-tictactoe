@@ -16,7 +16,7 @@ type Games = M.Map Integer Game
 
 data HistoryState
   = HistoryState
-    { msId :: Integer
-    , msGames :: Games
+    { hsId :: Integer
+    , hsGames :: Games
     }
 

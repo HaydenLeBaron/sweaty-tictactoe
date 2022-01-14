@@ -7,5 +7,5 @@ import qualified Web.Scotty as S
 main :: IO ()
 main = do
   games <- SSL.makeDummyGames
-  gameHistoryState <- STM.newTVarIO SST.HistoryState{msId = 1, msGames = games}
+  gameHistoryState <- STM.newTVarIO SST.HistoryState{hsId = 1, hsGames = games}
   S.scotty 3000 (SSL.serverApp gameHistoryState)

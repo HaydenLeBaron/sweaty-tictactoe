@@ -27,13 +27,13 @@ gamesHtml games = do
   mapM_ (uncurry gameHtml) $ reverse $ M.toList games
 
 gameHtml :: Integer -> Game -> Html
-gameHtml pid game = do
+gameHtml gid game = do
   let title = TL.concat [gWinner game, " (W) vs. ", gLoser game, " (L)"]
   H.div_ [ H.class_ "game" ] $ do
     H.div_ [ H.class_ "game-header" ] $ do
       H.h3_ [ H.class_ "game-winner" ] $
         H.a_
-          [H.href_ (TL.toStrict $ "/game/" <> TL.pack (show pid))]
+          [H.href_ (TL.toStrict $ "/game/" <> TL.pack (show gid))]
           (H.toHtml title)
 
       H.span_ $ do
@@ -44,7 +44,7 @@ gameHtml pid game = do
 
     H.form_
       [ H.method_ "post"
-      , H.action_ (TL.toStrict $ "/game/" <> TL.pack (show pid) <> "/delete")
+      , H.action_ (TL.toStrict $ "/game/" <> TL.pack (show gid) <> "/delete")
       , H.onsubmit_ "return confirm('Are you sure?')"
       , H.class_ "delete-game"
       ]
