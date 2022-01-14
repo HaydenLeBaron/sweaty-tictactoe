@@ -12,21 +12,19 @@ copyright:          2022 Hayden LeBaron
 extra-source-files: README.md 
 
 
-
 library
   hs-source-dirs:      client-src, server-src
   exposed-modules:     TTTLib, ScoreServerLib, ScoreServerHTML, ScoreServerTypes
 
   ghc-options:         -Wall -fno-warn-type-defaults
-  default-language:    Haskell2010
   build-depends:       base ^>=4.14.3.0, matrix ^>=0.3.6.1, vector ^>=0.12.3.1, scotty, text, containers, time, http-types, stm, lucid
-
+  default-language: Haskell2010
 
 executable sweaty-client
   main-is:          client/Main.hs
 
   build-depends: base ^>=4.14.3.0, matrix ^>=0.3.6.1, sweaty-tictactoe, http-conduit ^>=2.3.8, bytestring ^>=0.10.12.0
-
+  other-modules:         TTTConfig
   default-language: Haskell2010
   default-extensions:          OverloadedStrings
 
@@ -35,3 +33,4 @@ executable sweaty-server
   default-language:    Haskell2010
   ghc-options: -Wall -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base >= 4.7 && < 5 ,stm ^>=2.5.0.1, scotty, sweaty-tictactoe
+  other-modules:         TTTConfig

@@ -5,6 +5,7 @@ import qualified Data.Matrix   as M
 import           TTTLib
 import qualified Network.HTTP.Simple as SIMPLEHTTP
 import qualified Data.ByteString.Char8 as BSC
+import TTTConfig as CFG
 
 -- TODO: save port in a variable in a file instead of hardcoding
 -- TODO: save BSC api path in a file instead of hardcoding
@@ -43,7 +44,7 @@ play mrk turn (Right bs)
       SIMPLEHTTP.httpLBS
         $ SIMPLEHTTP.setRequestMethod "POST"
         $ SIMPLEHTTP.setRequestPath path
-        $ SIMPLEHTTP.setRequestPort 3000
+        $ SIMPLEHTTP.setRequestPort CFG.port
         $ SIMPLEHTTP.defaultRequest
       putStrLn "\n"
 

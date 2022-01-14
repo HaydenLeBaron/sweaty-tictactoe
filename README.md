@@ -38,3 +38,7 @@ $ cabal run sweaty-server
 ## API
 
 - POST localhost:3000/new?winner=VICTORIA&loser=LAUSER&boardstate=hello world%3B
+
+## Change server port
+
+change the value for `port` in `TTTConfig.hs`
