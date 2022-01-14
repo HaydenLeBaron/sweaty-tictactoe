@@ -10,43 +10,25 @@ import qualified Network.HTTP.Types as HTTP
 import qualified Control.Concurrent.STM as STM
 import Control.Monad.IO.Class (liftIO)
 import qualified Lucid as H
+import ScoreServerHTML as VIEW
+import ScoreServerTypes
 
------------
--- Types --
------------
-
-data Game
-  = Game
-    { gTime :: C.UTCTime
-    , gLoser :: TL.Text
-    , gWinner :: TL.Text
-    , gBoardstate :: TL.Text
-    }
-
-type Games = M.Map Integer Game
-
-data HistoryState
-  = HistoryState
-    { msId :: Integer
-    , msGames :: Games
-    }
-
-------------------------
--- Runner and Routing --
-------------------------
+----------------------
+-- RUNNER / ROUTER  --
+----------------------
 
 serverApp :: STM.TVar HistoryState -> S.ScottyM ()
 serverApp mystateVar = do
-  -- Our main page, which will display all of the tictactoe gmaes
+  -- HOME: Displays the entire history of tic-tac-toe games
   S.get "/" $ do
     games <- liftIO $ msGames <$> STM.readTVarIO mystateVar
     S.html $
       H.renderText $
-        template
+        VIEW.template
           "TicTacToe board - games"
-          (gamesHtml games)
+          (VIEW.gamesHtml games)
 
-  -- A page for a specific game
+  -- Page for a specific tic-tac-toe game
   S.get "/game/:id" $ do
     pid <- S.param "id"
     games <- liftIO $ msGames <$> STM.readTVarIO mystateVar
@@ -54,15 +36,15 @@ serverApp mystateVar = do
       Just game ->
         S.html $
           H.renderText $
-            template
+            VIEW.template
               ("TicTacToe board - game " <> TL.pack (show pid))
-              (gameHtml pid game)
+              (VIEW.gameHtml pid game)
 
       Nothing -> do
         S.status HTTP.notFound404
         S.html $
           H.renderText $
-            template
+            VIEW.template
               ("TicTacToe board - game " <> TL.pack (show pid) <> " not found.")
               "404 Game not found."
 
@@ -108,10 +90,14 @@ serverApp mystateVar = do
         S.status HTTP.notFound404
         S.text "404 Not Found."
 
-  -- css styling
+  -- Small amount of CSS styling
   S.get "/style.css" $ do
     S.setHeader "Content-Type" "text/css; charset=utf-8"
     S.raw ".main { width: 900px; margin: auto; }"
+
+-----------
+-- UTILS --
+-----------
 
 newGame :: Game -> STM.TVar HistoryState -> IO Integer
 newGame game mystateVar = do
@@ -126,10 +112,6 @@ newGame game mystateVar = do
       )
     pure (msId mystate)
 
------------
--- Utils --
------------
-
 makeDummyGames :: IO Games
 makeDummyGames = do
   time <- C.getCurrentTime
@@ -138,78 +120,8 @@ makeDummyGames = do
       0
       ( Game
         { gTime = time
-        , gWinner = "Dummy winner"
-        , gLoser = "Dummy loser"
-        , gBoardstate = "bla bla bla..."
+        , gWinner = "DUMMY WINNER"
+        , gLoser = "DUMMY LOSER"
+        , gBoardstate = "[[]]"
         }
-      )
-
-ppGame :: Game -> TL.Text
-ppGame game =
-  let
-    header =
-      TL.unwords
-        [ "[" <> TL.pack (show (gTime game)) <> "]"
-        , gWinner game
-        , "by"
-        , gLoser game
-        ]
-    seperator =
-      TL.replicate (TL.length header) "-"
-  in
-    TL.unlines
-      [ seperator
-      , header
-      , seperator
-      , gBoardstate game
-      , seperator
-      ]
-
-----------
--- HTML --
-----------
-
-type Html = H.Html ()
-
-template :: TL.Text -> Html -> Html
-template winner boardState =
-  H.doctypehtml_ $ do
-    H.head_ $ do
-      H.meta_ [ H.charset_ "utf-8" ]
-      H.title_ (H.toHtml winner)
-      H.link_ [ H.rel_ "stylesheet", H.type_ "text/css", H.href_ "/style.css"  ]
-    H.body_ $ do
-      H.div_ [ H.class_ "main" ] $ do
-        H.h1_ [ H.class_ "logo" ] $
-          H.a_ [H.href_ "/"] "TicTacToe Board"
-        boardState
-
-gamesHtml :: Games -> Html
-gamesHtml games = do
-  mapM_ (uncurry gameHtml) $ reverse $ M.toList games
-
-gameHtml :: Integer -> Game -> Html
-gameHtml pid game = do
-  let title = TL.concat [gWinner game, " (W) vs. ", gLoser game, " (L)"]
-  H.div_ [ H.class_ "game" ] $ do
-    H.div_ [ H.class_ "game-header" ] $ do
-      H.h3_ [ H.class_ "game-winner" ] $
-        H.a_
-          [H.href_ (TL.toStrict $ "/game/" <> TL.pack (show pid))]
-          (H.toHtml title)
-
-      H.span_ $ do
-        H.p_ [ H.class_ "game-time" ] $ H.toHtml (TL.pack (show (gTime game)))
-
-    H.div_ [H.class_ "game-boardstate"] $ do
-      H.toHtml (gBoardstate game)
-
-    H.form_
-      [ H.method_ "post"
-      , H.action_ (TL.toStrict $ "/game/" <> TL.pack (show pid) <> "/delete")
-      , H.onsubmit_ "return confirm('Are you sure?')"
-      , H.class_ "delete-game"
-      ]
-      ( do
-        H.input_ [H.type_ "submit", H.value_ "Delete", H.class_ "deletebtn"]
       )
