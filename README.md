@@ -1,6 +1,7 @@
 # Sweaty Tic-Tac-Toe
 
-Tic-Tac-Toe made for sweaty tryhards, by a sweaty tryhard--using the sweatiest language of them all: Haskell.
+Tic-Tac-Toe made for sweaty tryhards, by a sweaty tryhard. 
+Written in the original sweaty programming language.
 
 This repository contains:
 - **CLI client**
