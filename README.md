@@ -3,6 +3,10 @@
 ## Building
 
 ```
+cabal clean
+```
+
+```
 cabal build
 ```
 -- TODO: make sure tokens names are presented to the player in a sensible way (e.g. not player 1 and 4).
@@ -30,3 +34,7 @@ $ cabal run sweaty-client
 ```
 $ cabal run sweaty-server
 ```
+
+## API
+
+- POST localhost:3000/new?winner=VICTORIA&loser=LAUSER&boardstate=hello world%3B

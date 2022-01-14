@@ -25,8 +25,8 @@ data Game
 
 type Games = M.Map Integer Game
 
-data MyState
-  = MyState
+data HistoryState
+  = HistoryState
     { msId :: Integer
     , msGames :: Games
     }
@@ -35,14 +35,8 @@ data MyState
 -- Runner and Routing --
 ------------------------
 
-main :: IO ()
-main = do
-  games <- makeDummyGames
-  mystateVar <- STM.newTVarIO MyState{msId = 1, msGames = games}
-  S.scotty 3000 (myApp mystateVar)
-
-myApp :: STM.TVar MyState -> S.ScottyM ()
-myApp mystateVar = do
+serverApp :: STM.TVar HistoryState -> S.ScottyM ()
+serverApp mystateVar = do
   -- Our main page, which will display all of the tictactoe gmaes
   S.get "/" $ do
     games <- liftIO $ msGames <$> STM.readTVarIO mystateVar
@@ -119,7 +113,7 @@ myApp mystateVar = do
     S.setHeader "Content-Type" "text/css; charset=utf-8"
     S.raw ".main { width: 900px; margin: auto; }"
 
-newGame :: Game -> STM.TVar MyState -> IO Integer
+newGame :: Game -> STM.TVar HistoryState -> IO Integer
 newGame game mystateVar = do
   STM.atomically $ do
     mystate <- STM.readTVar mystateVar
