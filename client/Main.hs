@@ -7,11 +7,11 @@ import qualified Network.HTTP.Simple as SIMPLEHTTP
 import qualified Data.ByteString.Char8 as BSC
 import TTTConfig as CFG
 
--- TODO: save port in a variable in a file instead of hardcoding
 -- TODO: save BSC api path in a file instead of hardcoding
 
 type Turn = Int
 
+{- Run the game client. -}
 main = do
   putStrLn "================================================="
   putStrLn "== THIS IS THE START OF THE GAME"
@@ -21,7 +21,7 @@ main = do
   let bs0 = Right $ initBoardState dim
   play 1 1 bs0 -- Starting turn is player 1
 
-
+{- Keep trying to play the game. -}
 play :: Marker -> Turn -> Either (BoardState, String) BoardState -> IO ()
 play mrk turn (Left (bs, msg)) = do
   putStrLn $ "!!!!! INVALID MOVE: " ++ msg ++ " !!!!!"
@@ -62,7 +62,7 @@ play mrk turn (Right bs)
       let nxtPlayer = getNxtPlayer mrk $ M.nrows (currBoard bs)
       play nxtPlayer (turn + 1) $ tryApplyMove mrk xy bs
 
-
+{- Keep trying to get a validly formatted 2-Tuple. NEVVVER GIIVVE UPPPPPPP -}
 tenaciousGet2Tuple :: IO (Int, Int)
 tenaciousGet2Tuple =
   getLine
@@ -74,6 +74,7 @@ tenaciousGet2Tuple =
       tryExtract _ = putStrLn
         "Couldn't parse. Please enter two numbers like so: `x y`" >> tenaciousGet2Tuple
 
+{- Keep trying to get a validly formatted natural number. -}
 tenaciousGetNat :: IO Int
 tenaciousGetNat =
   getLine
