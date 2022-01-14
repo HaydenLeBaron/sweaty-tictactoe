@@ -1,44 +1,59 @@
-# README
+# Sweaty Tic-Tac-Toe
 
-## Building
+Tic-Tac-Toe made for sweaty tryhards, by a sweaty tryhard--using the sweatiest language of them all: Haskell.
+
+This repository contains:
+- **CLI client**
+  - Allows 2 people to play tic-tac-toe locally (hotseat)
+  - Supports NxN dimensional tic-tac-toe boards
+- **Game history HTTP server**
+  - Tracks the result of every game ever played on every client instance.
+  - Immortalizes each glorious victory and shameful defeat.
+
+## How to build
+
+If you don't want to build it yourself, check the RELEASES.
+
+Make sure you have `cabal` installed.
 
 ```
-cabal clean
+$ cabal clean && cabal build
 ```
 
-```
-cabal build
-```
--- TODO: make sure tokens names are presented to the player in a sensible way (e.g. not player 1 and 4).
--- TODO: Write build and run instructions and test them on a fresh clone of the repo
--- TODO: do testing with quickcheck
--- TODO: include a gif or picture in the README
--- TODO: link the project to my website, haydenlebaron.com
--- TODO: Generalize to N players.
--- TODO: prettify code with haskell prettifier.
--- TODO: compile document about what I learned and the resources I used.
--- TODO: Write all functions to never fail.
+## How to run
 
-## Run the client
+Run the client:
 
 ```
 $ cabal run sweaty-client
 ```
 
-### Client Bugs
-- [ ] Throws exception if you do 1x1 matrix and try to make a move out of bounds (can't get next player)
-
-
-## Run the server
+Run the server:
 
 ```
 $ cabal run sweaty-server
 ```
+The default port is `3000`. You can change it by changing the value for `port` in `TTTConfig.hs`
 
-## API
 
-- POST localhost:3000/new?winner=VICTORIA&loser=LAUSER&boardstate=hello world%3B
+## HTTP Server API
 
-## Change server port
+Get the home page:
 
-change the value for `port` in `TTTConfig.hs`
+```
+curl http://localhost:3000/
+```
+
+Add a game entry to the history:
+
+```
+curl -X POST http://localhost:3000/new?winner=<victor-name>&loser=<loser-name>&boardstate=<board-state>
+```
+
+Get the HTML of a specific game:
+
+```
+curl http://localhost/game/<id>
+```
+
+Try an `<id>` of `0` to get a dummy game.
