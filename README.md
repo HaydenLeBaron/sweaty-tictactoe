@@ -2,7 +2,7 @@
 
 
 Tic-Tac-Toe made for sweaty tryhards, by a sweaty tryhard. 
-Written in the original sweaty programming language.
+Over-envineered in the sweaty programming language.
 
 This repository contains:
 - **CLI client**
